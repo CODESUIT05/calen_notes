@@ -10,7 +10,7 @@ month = datetime.now().month
 year = datetime.now().year
 
 # Initialize Flask app
-calnote = Flask(__name__)
+app = Flask(__name__)
 
 # Load notes from a file
 def load_notes():
@@ -44,13 +44,13 @@ def generate_calendar(year, month):
     return calendar_data
 
 # Routes
-@calnote.route("/")
+@app.route("/")
 def index():
     global month, year
     calendar_data = generate_calendar(year, month)
     return render_template("index.html", calendar_data=calendar_data, year=year, month=month)
 
-@calnote.route("/save_note", methods=["POST"])
+@app.route("/save_note", methods=["POST"])
 def save_note():
     global selected_date, month, year
     note = request.form.get("note")
@@ -63,7 +63,7 @@ def save_note():
 
     return redirect(url_for("index"))
 
-@calnote.route("/delete_note", methods=["POST"])
+@app.route("/delete_note", methods=["POST"])
 def delete_note():
     global selected_date, month, year
     day = request.form.get("day")
@@ -76,7 +76,7 @@ def delete_note():
 
     return redirect(url_for("index"))
 
-@calnote.route("/prev_month")
+@app.route("/prev_month")
 def prev_month():
     global month, year
     if month == 1:
@@ -86,7 +86,7 @@ def prev_month():
         month -= 1
     return redirect(url_for("index"))
 
-@calnote.route("/next_month")
+@app.route("/next_month")
 def next_month():
     global month, year
     if month == 12:
@@ -98,4 +98,4 @@ def next_month():
 
 if __name__ == "__main__":
     notes = load_notes()
-    calnote.run(debug=True)
+    app.run(debug=True)
