@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar with To-Do Notes</title>
+    <style>
+        body {
+            background-color: #333;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .calendar-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .calendar-table th, .calendar-table td {
+            width: 14%;
+            padding: 10px;
+            text-align: center;
+        }
+        .calendar-table td {
+            cursor: pointer;
+            background-color: #444;
+        }
+        .calendar-table td.sunday {
+            background-color: grey;
+        }
+        .calendar-table td.highlight {
+            background-color: yellow;
+        }
+        .note-input {
+            margin-top: 10px;
+        }
+        button {
+            background-color: #444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Calendar for {{ month }}/{{ year }}</h1>
+    <div>
+        <form action="{{ url_for('prev_month') }}" method="get">
+            <button type="submit"><< Prev</button>
+        </form>
+        <form action="{{ url_for('next_month') }}" method="get">
+            <button type="submit">Next >></button>
+        </form>
+    </div>
+
+    <table class="calendar-table">
+        <tr>
+            <th>Mon</th>
+            <th>Tue</th>
+            <th>Wed</th>
+            <th>Thu</th>
+            <th>Fri</th>
+            <th>Sat</th>
+            <th>Sun</th>
+        </tr>
+        {% for week in calendar_data %}
+            <tr>
+                {% for day in week %}
+                    {% if day %}
+                        <td class="{% if loop.index == 7 %}sunday{% endif %} {% if day.note %}highlight{% endif %}">
+                            {{ day.day }}
+                            <form action="{{ url_for('save_note') }}" method="post">
+                                <input type="hidden" name="day" value="{{ day.day }}">
+                                <input type="text" name="note" value="{{ day.note }}" class="note-input">
+                                <button type="submit">Save</button>
+                            </form>
+                            <form action="{{ url_for('delete_note') }}" method="post">
+                                <input type="hidden" name="day" value="{{ day.day }}">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
